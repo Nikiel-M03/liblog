@@ -72,6 +72,15 @@ npm run test:ui
 npm run type-check
 ```
 
+### Test Coverage
+The project includes comprehensive testing with 115 tests covering:
+- **Unit tests with edge cases** (time, streak calculations)
+- **Negative tests** (error handling, validation)
+- **Integration tests** (Supabase operations, data flow)
+- **Component tests** (React component rendering)
+
+See [TESTING.md](TESTING.md) for detailed testing documentation.
+
 ## 4. Building for Production
 
 ### Build the App

@@ -136,7 +136,7 @@ describe('Time utilities - Edge Cases', () => {
 
   describe('getStartOfMonth - Edge Cases', () => {
     it('should handle already first day of month', () => {
-      const date = new Date('2024-01-01')
+      const date = new Date(2024, 0, 1) // Use constructor instead of string parsing
       const start = getStartOfMonth(date)
       expect(start.getDate()).toBe(1)
       expect(start.getMonth()).toBe(0) // January

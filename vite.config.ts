@@ -4,7 +4,7 @@ import path from 'path'
 
 export default defineConfig({
   plugins: [react()],
-  base: process.env.VITE_BASE_URL || '/liblog/',
+  base: process.env.NODE_ENV === 'development' ? '/' : (process.env.VITE_BASE_URL || '/liblog/'),
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),

@@ -177,13 +177,18 @@ describe('Supabase Integration Tests', () => {
         },
       ]
 
+      const chainable = {
+        gte: vi.fn().mockReturnThis(),
+        lte: vi.fn().mockResolvedValue({
+          data: logs,
+          error: null,
+        }),
+      }
+
       mockSupabase.from.mockReturnValue({
         select: vi.fn().mockReturnValue({
           eq: vi.fn().mockReturnValue({
-            order: vi.fn().mockResolvedValue({
-              data: logs,
-              error: null,
-            }),
+            order: vi.fn().mockReturnValue(chainable),
           }),
         }),
       })
@@ -209,13 +214,17 @@ describe('Supabase Integration Tests', () => {
         },
       ]
 
+      const chainable = {
+        gte: vi.fn().mockResolvedValue({
+          data: logs,
+          error: null,
+        }),
+      }
+
       mockSupabase.from.mockReturnValue({
         select: vi.fn().mockReturnValue({
           eq: vi.fn().mockReturnValue({
-            order: vi.fn().mockResolvedValue({
-              data: logs,
-              error: null,
-            }),
+            order: vi.fn().mockReturnValue(chainable),
           }),
         }),
       })
@@ -225,13 +234,17 @@ describe('Supabase Integration Tests', () => {
     })
 
     it('should handle queries with only end date', async () => {
+      const chainable = {
+        lte: vi.fn().mockResolvedValue({
+          data: [],
+          error: null,
+        }),
+      }
+
       mockSupabase.from.mockReturnValue({
         select: vi.fn().mockReturnValue({
           eq: vi.fn().mockReturnValue({
-            order: vi.fn().mockResolvedValue({
-              data: [],
-              error: null,
-            }),
+            order: vi.fn().mockReturnValue(chainable),
           }),
         }),
       })

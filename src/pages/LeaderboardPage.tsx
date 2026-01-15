@@ -54,9 +54,11 @@ function LeaderboardPage() {
   }, [friends])
 
   const leaderboard = useMemo(() => {
+    if (!user) return []
+    
     const entries: LeaderboardEntry[] = [
       {
-        userId: user!.id,
+        userId: user.id,
         displayName: 'You',
         totalHours: userHours.totalHours,
         totalMinutes: userHours.totalMinutes,
@@ -67,7 +69,7 @@ function LeaderboardPage() {
     return entries.sort((a, b) => b.totalMinutes - a.totalMinutes)
   }, [user, userHours, friendsHours])
 
-  if (isLoading) {
+  if (isLoading || !user) {
     return (
       <div className="min-h-screen bg-gray-100 py-8 px-4">
         <div className="max-w-4xl mx-auto">
