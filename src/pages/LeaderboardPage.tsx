@@ -26,9 +26,9 @@ function LeaderboardPage() {
         const hours: Record<string, LeaderboardEntry> = {}
 
         for (const friendship of friends) {
-          const friendId = friendship.friend_id
-          const friendData = friendship.friend as any
-          const totalHours = await getTotalHoursByUser(friendId)
+           const friendId = friendship.friend_id
+           const friendData = (friendship as any).friend
+           const totalHours = await getTotalHoursByUser(friendId)
 
           hours[friendId] = {
             userId: friendId,

@@ -1,7 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { supabase } from '@/services/supabase'
 import * as logsService from '@/services/logs'
-import * as authService from '@/services/auth'
 import { calculateStreak } from '@/utils/streak'
 import type { Database } from '@/types/supabase'
 

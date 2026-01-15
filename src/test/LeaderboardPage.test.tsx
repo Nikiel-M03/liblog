@@ -45,23 +45,24 @@ describe('LeaderboardPage', () => {
   })
 
   it('should show loading state when user is loading', () => {
-    vi.spyOn(useAuthModule, 'useAuth').mockReturnValue({
-      user: null,
-      isLoading: true,
-      error: null
-    })
+     vi.spyOn(useAuthModule, 'useAuth').mockReturnValue({
+       user: null,
+       isLoading: true,
+       error: null
+     })
 
-    vi.spyOn(useFriendsModule, 'useAcceptedFriends').mockReturnValue({
-      friends: [],
-      isLoading: true,
-      error: null
-    })
+     vi.spyOn(useFriendsModule, 'useAcceptedFriends').mockReturnValue({
+       friends: [],
+       isLoading: true,
+       error: null,
+       setFriends: vi.fn()
+     } as any)
 
-    vi.spyOn(useLogsModule, 'useTotalHours').mockReturnValue({
-      hours: { totalHours: 0, totalMinutes: 0 },
-      isLoading: true,
-      error: null
-    })
+     vi.spyOn(useLogsModule, 'useTotalHours').mockReturnValue({
+       hours: { totalHours: 0, totalMinutes: 0, remainingMinutes: 0 },
+       isLoading: true,
+       error: null
+     } as any)
 
     render(<LeaderboardPage />)
     
@@ -69,23 +70,24 @@ describe('LeaderboardPage', () => {
   })
 
   it('should handle null user gracefully and show loading state', () => {
-    vi.spyOn(useAuthModule, 'useAuth').mockReturnValue({
-      user: null,
-      isLoading: false,
-      error: null
-    })
+     vi.spyOn(useAuthModule, 'useAuth').mockReturnValue({
+       user: null,
+       isLoading: false,
+       error: null
+     })
 
-    vi.spyOn(useFriendsModule, 'useAcceptedFriends').mockReturnValue({
-      friends: [],
-      isLoading: false,
-      error: null
-    })
+     vi.spyOn(useFriendsModule, 'useAcceptedFriends').mockReturnValue({
+       friends: [],
+       isLoading: false,
+       error: null,
+       setFriends: vi.fn()
+     } as any)
 
-    vi.spyOn(useLogsModule, 'useTotalHours').mockReturnValue({
-      hours: { totalHours: 0, totalMinutes: 0 },
-      isLoading: false,
-      error: null
-    })
+     vi.spyOn(useLogsModule, 'useTotalHours').mockReturnValue({
+       hours: { totalHours: 0, totalMinutes: 0, remainingMinutes: 0 },
+       isLoading: false,
+       error: null
+     } as any)
 
     render(<LeaderboardPage />)
     
@@ -103,18 +105,19 @@ describe('LeaderboardPage', () => {
     vi.spyOn(useFriendsModule, 'useAcceptedFriends').mockReturnValue({
       friends: mockFriends as any,
       isLoading: false,
-      error: null
-    })
+      error: null,
+      setFriends: vi.fn()
+    } as any)
 
     vi.spyOn(useLogsModule, 'useTotalHours').mockReturnValue({
-      hours: { totalHours: 10, totalMinutes: 30 },
+      hours: { totalHours: 10, totalMinutes: 30, remainingMinutes: 30 },
       isLoading: false,
       error: null
-    })
+    } as any)
 
     vi.spyOn(logsService, 'getTotalHoursByUser')
-      .mockResolvedValueOnce({ totalHours: 5, totalMinutes: 45 })
-      .mockResolvedValueOnce({ totalHours: 20, totalMinutes: 15 })
+      .mockResolvedValueOnce({ totalHours: 5, totalMinutes: 45, remainingMinutes: 45 })
+      .mockResolvedValueOnce({ totalHours: 20, totalMinutes: 15, remainingMinutes: 15 })
 
     render(<LeaderboardPage />)
 
@@ -136,14 +139,15 @@ describe('LeaderboardPage', () => {
     vi.spyOn(useFriendsModule, 'useAcceptedFriends').mockReturnValue({
       friends: [],
       isLoading: false,
-      error: null
-    })
+      error: null,
+      setFriends: vi.fn()
+    } as any)
 
     vi.spyOn(useLogsModule, 'useTotalHours').mockReturnValue({
-      hours: { totalHours: 10, totalMinutes: 30 },
+      hours: { totalHours: 10, totalMinutes: 30, remainingMinutes: 30 },
       isLoading: false,
       error: null
-    })
+    } as any)
 
     render(<LeaderboardPage />)
 
@@ -162,18 +166,19 @@ describe('LeaderboardPage', () => {
     vi.spyOn(useFriendsModule, 'useAcceptedFriends').mockReturnValue({
       friends: mockFriends as any,
       isLoading: false,
-      error: null
-    })
+      error: null,
+      setFriends: vi.fn()
+    } as any)
 
     vi.spyOn(useLogsModule, 'useTotalHours').mockReturnValue({
-      hours: { totalHours: 5, totalMinutes: 15 },
+      hours: { totalHours: 5, totalMinutes: 15, remainingMinutes: 15 },
       isLoading: false,
       error: null
-    })
+    } as any)
 
     vi.spyOn(logsService, 'getTotalHoursByUser')
-      .mockResolvedValueOnce({ totalHours: 20, totalMinutes: 45 })
-      .mockResolvedValueOnce({ totalHours: 10, totalMinutes: 30 })
+      .mockResolvedValueOnce({ totalHours: 20, totalMinutes: 45, remainingMinutes: 45 })
+      .mockResolvedValueOnce({ totalHours: 10, totalMinutes: 30, remainingMinutes: 30 })
 
     render(<LeaderboardPage />)
 

@@ -311,7 +311,7 @@ describe('Friends service - Negative Tests', () => {
 
       const friends = await getAcceptedFriends('user1')
       expect(friends).toHaveLength(1)
-      expect(friends[0].friend).toBeDefined()
+      expect((friends[0] as any).friend).toBeDefined()
     })
   })
 

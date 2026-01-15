@@ -2,23 +2,32 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import LogForm from '@/features/logging/LogForm'
 
+interface LogData {
+  date: string
+  start_time: string
+  end_time: string
+  notes?: string
+  duration_minutes: number
+}
+
 describe('LogForm', () => {
-  let mockOnSubmit: ReturnType<typeof vi.fn>
+  let mockOnSubmit: ReturnType<typeof vi.fn<[LogData], Promise<void>>>
 
   beforeEach(() => {
-    mockOnSubmit = vi.fn()
+    mockOnSubmit = vi.fn<[LogData], Promise<void>>().mockResolvedValue(undefined)
   })
 
   it('should render form fields', () => {
-    render(<LogForm onSubmit={mockOnSubmit} />)
+     mockOnSubmit.mockResolvedValue(undefined)
+     render(<LogForm onSubmit={mockOnSubmit} />)
 
-    expect(screen.getByLabelText(/Date/i)).toBeInTheDocument()
-    expect(screen.getByLabelText(/Start Time/i)).toBeInTheDocument()
-    expect(screen.getByLabelText(/End Time/i)).toBeInTheDocument()
-  })
+     expect(screen.getByLabelText(/Date/i)).toBeInTheDocument()
+     expect(screen.getByLabelText(/Start Time/i)).toBeInTheDocument()
+     expect(screen.getByLabelText(/End Time/i)).toBeInTheDocument()
+   })
 
-  it('should submit form with valid data', async () => {
-    mockOnSubmit.mockResolvedValue(undefined)
+   it('should submit form with valid data', async () => {
+     mockOnSubmit.mockResolvedValue(undefined)
 
     render(<LogForm onSubmit={mockOnSubmit} />)
 

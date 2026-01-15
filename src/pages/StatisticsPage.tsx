@@ -1,7 +1,6 @@
 import { useMemo } from 'react'
 import { useAuth } from '@/hooks/useAuth'
 import { useLogs } from '@/hooks/useLogs'
-import { formatDuration } from '@/utils/time'
 import { getStartOfMonth, getStartOfWeek } from '@/utils/time'
 import {
   LineChart,
@@ -16,9 +15,6 @@ import {
   Legend,
 } from 'recharts'
 import Card from '@/components/Card'
-import type { Database } from '@/types/supabase'
-
-type Log = Database['public']['Tables']['logs']['Row']
 
 function StatisticsPage() {
   const { user } = useAuth()

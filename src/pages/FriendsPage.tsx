@@ -96,7 +96,7 @@ function FriendsPage() {
           <Card title="Pending Requests">
             <div className="space-y-4">
               {requests.map((request) => {
-                const sender = request.user as any
+                const sender = (request as any).user
                 return (
                   <div key={request.id} className="flex justify-between items-center p-4 bg-gray-50 rounded">
                     <div>
@@ -129,7 +129,7 @@ function FriendsPage() {
           <Card title="Friends">
             <div className="space-y-4">
               {friends.map((friendship) => {
-                const friendData = friendship.friend as any
+                const friendData = (friendship as any).friend
                 return (
                   <div key={friendship.id} className="flex justify-between items-center p-4 bg-gray-50 rounded">
                     <div>
