@@ -1,0 +1,70 @@
+# Dependencies
+node_modules/
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Build output
+dist/
+build/
+.next/
+out/
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+.env.production.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+*.iml
+.gradle
+
+# Testing
+coverage/
+.nyc_output/
+.vitest/
+
+# Vite
+.vite/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+*.pem
+
+# Development
+.cache/
+.eslintcache
+.prettierignore
+
+# Optional npm cache
+.npm
+
+# Mac
+.AppleDouble
+.LSOverride
+
+# Windows
+*.lnk
+$RECYCLE.BIN/
+
+# Runtime data
+pids/
+*.pid
+*.seed
+*.pid.lock
