@@ -104,42 +104,42 @@ describe('Friends service - Negative Tests', () => {
     });
     describe('acceptFriendRequest - Negative Cases', () => {
         it('should throw error when friendship not found', async () => {
-            mockSupabase.from.mockImplementation(() => ({
-                update: vi.fn(() => ({
-                    eq: vi.fn(() => ({
+            mockSupabase.from.mockReturnValue({
+                update: vi.fn().mockReturnValue({
+                    eq: vi.fn().mockReturnValue({
                         select: vi.fn().mockResolvedValue({
                             data: null,
                             error: new Error('Friendship not found'),
                         }),
-                    })),
-                })),
-            }));
+                    }),
+                }),
+            });
             await expect(acceptFriendRequest('nonexistent-id')).rejects.toThrow('Friendship not found');
         });
         it('should throw error when update fails', async () => {
-            mockSupabase.from.mockImplementation(() => ({
-                update: vi.fn(() => ({
-                    eq: vi.fn(() => ({
+            mockSupabase.from.mockReturnValue({
+                update: vi.fn().mockReturnValue({
+                    eq: vi.fn().mockReturnValue({
                         select: vi.fn().mockResolvedValue({
                             data: null,
                             error: new Error('Update permission denied'),
                         }),
-                    })),
-                })),
-            }));
+                    }),
+                }),
+            });
             await expect(acceptFriendRequest('friendship1')).rejects.toThrow('Update permission denied');
         });
         it('should throw error with empty friendship ID', async () => {
-            mockSupabase.from.mockImplementation(() => ({
-                update: vi.fn(() => ({
-                    eq: vi.fn(() => ({
+            mockSupabase.from.mockReturnValue({
+                update: vi.fn().mockReturnValue({
+                    eq: vi.fn().mockReturnValue({
                         select: vi.fn().mockResolvedValue({
                             data: null,
                             error: new Error('Invalid ID'),
                         }),
-                    })),
-                })),
-            }));
+                    }),
+                }),
+            });
             await expect(acceptFriendRequest('')).rejects.toThrow('Invalid ID');
         });
     });

@@ -83,7 +83,7 @@ describe('Time utilities - Edge Cases', () => {
             const date = new Date('2024-01-15'); // Monday
             const start = getStartOfWeek(date);
             expect(start.getDay()).toBe(1);
-            expect(start.getDate()).toBe(8); // Actual Monday of that week
+            expect(start.getDate()).toBe(15); // Monday itself
         });
         it('should return previous Monday for Saturday', () => {
             const date = new Date('2024-01-20'); // Saturday
