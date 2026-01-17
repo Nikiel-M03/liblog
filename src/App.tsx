@@ -42,8 +42,10 @@ function App() {
     return <LoadingSpinner />
   }
 
+  const basename = import.meta.env.MODE === 'development' ? '/' : '/liblog/'
+
   return (
-    <Router>
+    <Router basename={basename}>
       {user && <Navbar />}
       <Routes>
         <Route
