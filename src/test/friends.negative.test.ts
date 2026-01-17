@@ -128,7 +128,7 @@ describe('Friends service - Negative Tests', () => {
 
   describe('acceptFriendRequest - Negative Cases', () => {
     it('should throw error when friendship not found', async () => {
-      mockSupabase.from.mockReturnValue({
+      vi.spyOn(mockSupabase, 'from').mockReturnValue({
         update: vi.fn().mockReturnValue({
           eq: vi.fn().mockReturnValue({
             select: vi.fn().mockResolvedValue({
@@ -137,7 +137,7 @@ describe('Friends service - Negative Tests', () => {
             }),
           }),
         }),
-      })
+      } as any)
 
       await expect(acceptFriendRequest('nonexistent-id')).rejects.toThrow(
         'Friendship not found',
@@ -145,7 +145,7 @@ describe('Friends service - Negative Tests', () => {
     })
 
     it('should throw error when update fails', async () => {
-      mockSupabase.from.mockReturnValue({
+      vi.spyOn(mockSupabase, 'from').mockReturnValue({
         update: vi.fn().mockReturnValue({
           eq: vi.fn().mockReturnValue({
             select: vi.fn().mockResolvedValue({
@@ -154,7 +154,7 @@ describe('Friends service - Negative Tests', () => {
             }),
           }),
         }),
-      })
+      } as any)
 
       await expect(acceptFriendRequest('friendship1')).rejects.toThrow(
         'Update permission denied',
@@ -162,7 +162,7 @@ describe('Friends service - Negative Tests', () => {
     })
 
     it('should throw error with empty friendship ID', async () => {
-      mockSupabase.from.mockReturnValue({
+      vi.spyOn(mockSupabase, 'from').mockReturnValue({
         update: vi.fn().mockReturnValue({
           eq: vi.fn().mockReturnValue({
             select: vi.fn().mockResolvedValue({
@@ -171,7 +171,7 @@ describe('Friends service - Negative Tests', () => {
             }),
           }),
         }),
-      })
+      } as any)
 
       await expect(acceptFriendRequest('')).rejects.toThrow('Invalid ID')
     })
