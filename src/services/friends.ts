@@ -11,9 +11,12 @@ export async function sendFriendRequest(fromUserId: string, toEmail: string) {
     .eq('email', toEmail)
     .single()
 
-  if (profileError) throw new Error('User not found')
+  if (profileError || !profiles) throw new Error('User not found')
 
   const toUserId = profiles.id
+
+  // Check if trying to friend yourself
+  if (fromUserId === toUserId) throw new Error('Cannot send a friend request to yourself')
 
   // Check if friendship already exists
   const { data: existing } = await supabase
@@ -38,7 +41,7 @@ export async function sendFriendRequest(fromUserId: string, toEmail: string) {
         status: 'pending',
       },
     ])
-    .select()
+    .select('*, friend:friend_id(id, email, display_name)')
 
   if (error) throw error
 
@@ -78,9 +81,38 @@ export async function getPendingRequests(userId: string) {
 export async function getAcceptedFriends(userId: string) {
   const { data, error } = await supabase
     .from('friendships')
+    .select('*, friend:friend_id(id, email, display_name), user:user_id(id, email, display_name)')
+    .or(
+      `and(user_id.eq.${userId},status.eq.accepted),and(friend_id.eq.${userId},status.eq.accepted)`
+    )
+
+  if (error) throw error
+
+  console.log('Raw friendship data for', userId, ':', data)
+
+  // Normalize the data: if user_id is the current user, use friend; otherwise use user
+  const normalizedData = data?.map(friendship => ({
+    ...friendship,
+    friend:
+      friendship.user_id === userId
+        ? friendship.friend
+        : { id: friendship.user?.id, email: friendship.user?.email, display_name: friendship.user?.display_name }
+  }))
+
+  console.log('Normalized friends data:', normalizedData)
+  normalizedData?.forEach(f => {
+    console.log('Friend entry:', { user_id: f.user_id, friend_id: f.friend_id, friend: (f as any).friend })
+  })
+
+  return normalizedData as Friendship[]
+}
+
+export async function getOutgoingRequests(userId: string) {
+  const { data, error } = await supabase
+    .from('friendships')
     .select('*, friend:friend_id(id, email, display_name)')
     .eq('user_id', userId)
-    .eq('status', 'accepted')
+    .eq('status', 'pending')
 
   if (error) throw error
 
@@ -88,6 +120,12 @@ export async function getAcceptedFriends(userId: string) {
 }
 
 export async function removeFriend(friendshipId: string) {
+  const { error } = await supabase.from('friendships').delete().eq('id', friendshipId)
+
+  if (error) throw error
+}
+
+export async function cancelFriendRequest(friendshipId: string) {
   const { error } = await supabase.from('friendships').delete().eq('id', friendshipId)
 
   if (error) throw error

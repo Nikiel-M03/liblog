@@ -10,18 +10,19 @@ export async function signUp(email: string, password: string, displayName: strin
 
   if (!data.user) throw new Error('User creation failed')
 
-  // Create profile - this is required for foreign key constraint
-  const { error: profileError } = await supabase.from('profiles').insert([
-    {
-      id: data.user.id,
-      email: email,
-      display_name: displayName,
-    },
-  ])
+  // Profile is automatically created by trigger with email as display_name
+  // Small delay to ensure profile exists before updating
+  await new Promise((resolve) => setTimeout(resolve, 500))
 
-  if (profileError) {
-    console.error('Profile creation error:', profileError)
-    throw new Error(`Profile creation failed: ${profileError.message}`)
+  // Call the RPC function to update display name
+  const { error: rpcError } = await supabase.rpc('set_profile_display_name', {
+    user_id: data.user.id,
+    new_display_name: displayName,
+  })
+
+  if (rpcError) {
+    console.error('Display name update error:', rpcError)
+    throw new Error(`Failed to set display name: ${rpcError.message}`)
   }
 
   return data.user

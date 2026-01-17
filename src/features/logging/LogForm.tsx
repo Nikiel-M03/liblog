@@ -1,8 +1,11 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { calculateDurationMinutes } from '@/utils/time'
 import Input from '@/components/Input'
 import Button from '@/components/Button'
 import Card from '@/components/Card'
+import type { Database } from '@/types/supabase'
+
+type Log = Database['public']['Tables']['logs']['Row']
 
 interface LogFormProps {
   onSubmit: (data: {
@@ -12,15 +15,32 @@ interface LogFormProps {
     notes?: string
     duration_minutes: number
   }) => Promise<void>
+  editingLog?: Log | null
+  onCancel?: () => void
 }
 
-function LogForm({ onSubmit }: LogFormProps) {
+function LogForm({ onSubmit, editingLog, onCancel }: LogFormProps) {
   const [date, setDate] = useState(new Date().toISOString().split('T')[0])
   const [startTime, setStartTime] = useState('09:00')
   const [endTime, setEndTime] = useState('10:00')
   const [notes, setNotes] = useState('')
   const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+
+  useEffect(() => {
+    if (editingLog) {
+      setDate(editingLog.date)
+      setStartTime(editingLog.start_time)
+      setEndTime(editingLog.end_time)
+      setNotes(editingLog.notes || '')
+    } else {
+      setDate(new Date().toISOString().split('T')[0])
+      setStartTime('09:00')
+      setEndTime('10:00')
+      setNotes('')
+    }
+    setError('')
+  }, [editingLog])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -38,19 +58,30 @@ function LogForm({ onSubmit }: LogFormProps) {
         duration_minutes: durationMinutes,
       })
 
-      setDate(new Date().toISOString().split('T')[0])
-      setStartTime('09:00')
-      setEndTime('10:00')
-      setNotes('')
+      if (!editingLog) {
+        setDate(new Date().toISOString().split('T')[0])
+        setStartTime('09:00')
+        setEndTime('10:00')
+        setNotes('')
+      }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to add log')
+      setError(err instanceof Error ? err.message : `Failed to ${editingLog ? 'update' : 'add'} log`)
     } finally {
       setIsLoading(false)
     }
   }
 
+  const handleCancel = () => {
+    setDate(new Date().toISOString().split('T')[0])
+    setStartTime('09:00')
+    setEndTime('10:00')
+    setNotes('')
+    setError('')
+    onCancel?.()
+  }
+
   return (
-    <Card title="Log Hours">
+    <Card title={editingLog ? 'Edit Session' : 'Log Hours'}>
       {error && <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-lg">{error}</div>}
 
       <form onSubmit={handleSubmit} className="space-y-4">
@@ -86,9 +117,21 @@ function LogForm({ onSubmit }: LogFormProps) {
           rows={3}
         />
 
-        <Button isLoading={isLoading} className="w-full">
-          Add Log
-        </Button>
+        <div className="flex gap-2">
+          <Button isLoading={isLoading} className="flex-1">
+            {editingLog ? 'Update Session' : 'Add Log'}
+          </Button>
+          {editingLog && (
+            <button
+              type="button"
+              onClick={handleCancel}
+              className="flex-1 px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition font-medium disabled:opacity-50"
+              disabled={isLoading}
+            >
+              Cancel
+            </button>
+          )}
+        </div>
       </form>
     </Card>
   )

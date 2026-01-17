@@ -23,20 +23,24 @@ describe('LeaderboardPage', () => {
 
   const mockFriends = [
     {
+      user_id: 'user-1',
       friend_id: 'friend-1',
       friend: {
         id: 'friend-1',
         display_name: 'Friend One',
         email: 'friend1@example.com'
-      }
+      },
+      status: 'accepted'
     },
     {
+      user_id: 'user-1',
       friend_id: 'friend-2',
       friend: {
         id: 'friend-2',
         display_name: 'Friend Two',
         email: 'friend2@example.com'
-      }
+      },
+      status: 'accepted'
     }
   ]
 

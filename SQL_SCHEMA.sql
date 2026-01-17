@@ -143,6 +143,19 @@ CREATE TRIGGER on_auth_user_created
   AFTER INSERT ON auth.users
   FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
 
+-- Create a function to set display name during signup (callable with anon key)
+CREATE OR REPLACE FUNCTION public.set_profile_display_name(user_id uuid, new_display_name text)
+RETURNS void AS $$
+BEGIN
+  UPDATE public.profiles
+  SET display_name = new_display_name
+  WHERE id = user_id;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- Grant execute permission to authenticated and anon users
+GRANT EXECUTE ON FUNCTION public.set_profile_display_name(uuid, text) TO anon, authenticated;
+
 -- Create trigger to update updated_at
 CREATE OR REPLACE FUNCTION update_timestamp()
 RETURNS TRIGGER AS $$

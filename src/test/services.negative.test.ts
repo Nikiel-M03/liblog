@@ -167,14 +167,15 @@ describe('Services - Negative Tests', () => {
         error: null,
       })
 
-      mockSupabase.from.mockReturnValue({
-        insert: vi.fn().mockResolvedValue({
+      if (typeof mockSupabase.rpc === 'function' && mockSupabase.rpc.mockResolvedValue) {
+        mockSupabase.rpc.mockResolvedValue({
+          data: null,
           error: new Error('Profile insert failed'),
-        }),
-      })
+        })
+      }
 
       await expect(signUp('test@example.com', 'password123', 'Test User')).rejects.toThrow(
-        'Profile creation failed: Profile insert failed',
+        'Failed to set display name: Profile insert failed',
       )
     })
 

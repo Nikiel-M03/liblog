@@ -13,6 +13,7 @@ function SignupPage() {
   const [confirmPassword, setConfirmPassword] = useState('')
   const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+  const [showConfirmation, setShowConfirmation] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -27,12 +28,35 @@ function SignupPage() {
 
     try {
       await signUp(email, password, displayName)
-      navigate('/login')
+      setShowConfirmation(true)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Signup failed')
     } finally {
       setIsLoading(false)
     }
+  }
+
+  if (showConfirmation) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gray-100">
+        <Card className="w-full max-w-md">
+          <h1 className="text-3xl font-bold mb-6 text-center">LibLog</h1>
+          <div className="space-y-4">
+            <div className="p-4 bg-blue-100 text-blue-800 rounded-lg">
+              <p className="font-semibold mb-2">Confirm your email</p>
+              <p className="text-sm">
+                We've sent a confirmation email to <strong>{email}</strong>. Please check your inbox and click
+                the confirmation link to activate your account.
+              </p>
+            </div>
+            <p className="text-sm text-gray-600">Once confirmed, you can log in to your account.</p>
+            <Button className="w-full" onClick={() => navigate('/login')}>
+              Go to Login
+            </Button>
+          </div>
+        </Card>
+      </div>
+    )
   }
 
   return (

@@ -10,7 +10,7 @@ interface LeaderboardEntry {
   userId: string
   displayName: string
   totalHours: number
-  totalMinutes: number
+  remainingMinutes: number
 }
 
 function LeaderboardPage() {
@@ -19,25 +19,34 @@ function LeaderboardPage() {
   const { hours: userHours } = useTotalHours(user?.id)
   const [friendsHours, setFriendsHours] = useState<Record<string, LeaderboardEntry>>({})
   const [isLoading, setIsLoading] = useState(true)
+  
+  console.log('LeaderboardPage - friends from hook:', friends)
 
   useEffect(() => {
     const fetchFriendHours = async () => {
       try {
         const hours: Record<string, LeaderboardEntry> = {}
+        
+        console.log('fetchFriendHours - friends.length:', friends.length)
 
         for (const friendship of friends) {
-           const friendId = friendship.friend_id
+           // Determine which user is the friend based on the friendship direction
+           const isFriendUser = friendship.user_id === user?.id
+           const friendId = isFriendUser ? friendship.friend_id : friendship.user_id
            const friendData = (friendship as any).friend
+           console.log('Processing friend:', { friendId, isFriendUser, friendData })
            const totalHours = await getTotalHoursByUser(friendId)
+           console.log('Got hours for', friendData?.display_name, ':', totalHours)
 
           hours[friendId] = {
             userId: friendId,
             displayName: friendData.display_name || friendData.email,
             totalHours: totalHours.totalHours,
-            totalMinutes: totalHours.totalMinutes,
+            remainingMinutes: totalHours.remainingMinutes,
           }
         }
 
+        console.log('friendsHours to be set:', hours)
         setFriendsHours(hours)
       } catch (err) {
         console.error('Failed to fetch friend hours:', err)
@@ -61,12 +70,12 @@ function LeaderboardPage() {
         userId: user.id,
         displayName: 'You',
         totalHours: userHours.totalHours,
-        totalMinutes: userHours.totalMinutes,
+        remainingMinutes: userHours.remainingMinutes,
       },
-      ...Object.values(friendsHours),
+      ...Object.values(friendsHours).filter(friend => friend.userId !== user.id),
     ]
 
-    return entries.sort((a, b) => b.totalMinutes - a.totalMinutes)
+    return entries.sort((a, b) => (b.totalHours * 60 + b.remainingMinutes) - (a.totalHours * 60 + a.remainingMinutes))
   }, [user, userHours, friendsHours])
 
   if (isLoading || !user) {
@@ -82,7 +91,7 @@ function LeaderboardPage() {
   return (
     <div className="min-h-screen bg-gray-100 py-8 px-4">
       <div className="max-w-4xl mx-auto space-y-6">
-        <h1 className="text-4xl font-bold">Leaderboard</h1>
+        <h1 className="text-4xl font-bold text-gray-900">Leaderboard</h1>
 
         {leaderboard.length === 1 ? (
           <Card>
@@ -113,7 +122,7 @@ function LeaderboardPage() {
                     </td>
                     <td className="py-3 px-4">{entry.displayName}</td>
                     <td className="text-right py-3 px-4 font-semibold">
-                      {entry.totalHours}h {entry.totalMinutes % 60}m
+                      {entry.totalHours}h {entry.remainingMinutes}m
                     </td>
                   </tr>
                 ))}

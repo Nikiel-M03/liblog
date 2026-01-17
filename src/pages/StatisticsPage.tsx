@@ -92,7 +92,7 @@ function StatisticsPage() {
   return (
     <div className="min-h-screen bg-gray-100 py-8 px-4">
       <div className="max-w-7xl mx-auto space-y-6">
-        <h1 className="text-4xl font-bold">Statistics</h1>
+        <h1 className="text-4xl font-bold text-gray-900">Statistics</h1>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <Card title="This Week">

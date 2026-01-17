@@ -128,16 +128,16 @@ describe('Friends service - Negative Tests', () => {
 
   describe('acceptFriendRequest - Negative Cases', () => {
     it('should throw error when friendship not found', async () => {
-      mockSupabase.from.mockReturnValue({
-        update: vi.fn().mockReturnValue({
-          eq: vi.fn().mockReturnValue({
+      mockSupabase.from.mockImplementation(() => ({
+        update: vi.fn(() => ({
+          eq: vi.fn(() => ({
             select: vi.fn().mockResolvedValue({
               data: null,
               error: new Error('Friendship not found'),
             }),
-          }),
-        }),
-      })
+          })),
+        })),
+      }))
 
       await expect(acceptFriendRequest('nonexistent-id')).rejects.toThrow(
         'Friendship not found',
@@ -145,16 +145,16 @@ describe('Friends service - Negative Tests', () => {
     })
 
     it('should throw error when update fails', async () => {
-      mockSupabase.from.mockReturnValue({
-        update: vi.fn().mockReturnValue({
-          eq: vi.fn().mockReturnValue({
+      mockSupabase.from.mockImplementation(() => ({
+        update: vi.fn(() => ({
+          eq: vi.fn(() => ({
             select: vi.fn().mockResolvedValue({
               data: null,
               error: new Error('Update permission denied'),
             }),
-          }),
-        }),
-      })
+          })),
+        })),
+      }))
 
       await expect(acceptFriendRequest('friendship1')).rejects.toThrow(
         'Update permission denied',
@@ -162,16 +162,16 @@ describe('Friends service - Negative Tests', () => {
     })
 
     it('should throw error with empty friendship ID', async () => {
-      mockSupabase.from.mockReturnValue({
-        update: vi.fn().mockReturnValue({
-          eq: vi.fn().mockReturnValue({
+      mockSupabase.from.mockImplementation(() => ({
+        update: vi.fn(() => ({
+          eq: vi.fn(() => ({
             select: vi.fn().mockResolvedValue({
               data: null,
               error: new Error('Invalid ID'),
             }),
-          }),
-        }),
-      })
+          })),
+        })),
+      }))
 
       await expect(acceptFriendRequest('')).rejects.toThrow('Invalid ID')
     })
@@ -261,11 +261,9 @@ describe('Friends service - Negative Tests', () => {
     it('should throw error when query fails', async () => {
       mockSupabase.from.mockReturnValue({
         select: vi.fn().mockReturnValue({
-          eq: vi.fn().mockReturnValue({
-            eq: vi.fn().mockResolvedValue({
-              data: null,
-              error: new Error('Query failed'),
-            }),
+          or: vi.fn().mockResolvedValue({
+            data: null,
+            error: new Error('Query failed'),
           }),
         }),
       })
@@ -276,11 +274,9 @@ describe('Friends service - Negative Tests', () => {
     it('should return empty array when no accepted friends', async () => {
       mockSupabase.from.mockReturnValue({
         select: vi.fn().mockReturnValue({
-          eq: vi.fn().mockReturnValue({
-            eq: vi.fn().mockResolvedValue({
-              data: [],
-              error: null,
-            }),
+          or: vi.fn().mockResolvedValue({
+            data: [],
+            error: null,
           }),
         }),
       })
@@ -292,19 +288,17 @@ describe('Friends service - Negative Tests', () => {
     it('should handle partial friend data gracefully', async () => {
       mockSupabase.from.mockReturnValue({
         select: vi.fn().mockReturnValue({
-          eq: vi.fn().mockReturnValue({
-            eq: vi.fn().mockResolvedValue({
-              data: [
-                {
-                  id: 'friendship1',
-                  user_id: 'user1',
-                  friend_id: 'user2',
-                  status: 'accepted',
-                  friend: { id: 'user2', email: 'user2@example.com' }, // missing display_name
-                },
-              ],
-              error: null,
-            }),
+          or: vi.fn().mockResolvedValue({
+            data: [
+              {
+                id: 'friendship1',
+                user_id: 'user1',
+                friend_id: 'user2',
+                status: 'accepted',
+                friend: { id: 'user2', email: 'user2@example.com' }, // missing display_name
+              },
+            ],
+            error: null,
           }),
         }),
       })

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { getPendingRequests, getAcceptedFriends, } from '@/services/friends';
+import { getPendingRequests, getAcceptedFriends, getOutgoingRequests, } from '@/services/friends';
 export function usePendingRequests(userId) {
     const [requests, setRequests] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -24,13 +24,40 @@ export function usePendingRequests(userId) {
     }, [userId]);
     return { requests, isLoading, error, setRequests };
 }
-export function useAcceptedFriends(userId) {
-    const [friends, setFriends] = useState([]);
+export function useOutgoingRequests(userId) {
+    const [outgoing, setOutgoing] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
     useEffect(() => {
         if (!userId)
             return;
+        const fetchOutgoing = async () => {
+            try {
+                setIsLoading(true);
+                const data = await getOutgoingRequests(userId);
+                setOutgoing(data);
+            }
+            catch (err) {
+                setError(err instanceof Error ? err : new Error('Failed to fetch outgoing requests'));
+            }
+            finally {
+                setIsLoading(false);
+            }
+        };
+        fetchOutgoing();
+    }, [userId]);
+    return { outgoing, isLoading, error, setOutgoing };
+}
+export function useAcceptedFriends(userId) {
+    const [friends, setFriends] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState(null);
+    useEffect(() => {
+        console.log('useAcceptedFriends effect running with userId:', userId);
+        if (!userId) {
+            console.log('userId is falsy, returning early');
+            return;
+        }
         const fetchFriends = async () => {
             try {
                 setIsLoading(true);
@@ -38,6 +65,7 @@ export function useAcceptedFriends(userId) {
                 setFriends(data);
             }
             catch (err) {
+                console.error('Error fetching friends:', err);
                 setError(err instanceof Error ? err : new Error('Failed to fetch friends'));
             }
             finally {
